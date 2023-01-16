@@ -21,26 +21,63 @@ namespace BulkyBookWeb.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult Form(int? Id)
         {
-            
+            var category = new Category();
+            if(Id != null) {
+                var categoryFromDb = _db.Categories.Find(Id);
+                if (categoryFromDb == null)
+                {
+                    return NotFound();
+                }
+                category = categoryFromDb;
+            }
 
-            return View();
+            return View(category);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Category category)
+        public IActionResult Save(Category category)
         {
-            if (ModelState.IsValid)
+            if(category.Id == 0)
             {
-                category.CreatedDateTime = DateTime.Now;
+                if (ModelState.IsValid)
+                {
+                    category.CreatedDateTime = DateTime.Now;
 
-                _db.Categories.Add(category);
-                _db.SaveChanges();
-                return RedirectToAction("Index");
+                    _db.Categories.Add(category);
+                    _db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                return View(category);
             }
-            return View(category);
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    _db.Categories.Update(category);
+                    _db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                return View(category);
+            }
+         
+        }
+
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var categoryFromDb = _db.Categories.Find(id);
+            if(categoryFromDb == null)
+            {
+                return NotFound();
+            }
+
+            _db.Categories.Remove(categoryFromDb);
+            _db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
     }
 }
