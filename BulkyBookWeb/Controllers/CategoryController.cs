@@ -66,18 +66,19 @@ namespace BulkyBookWeb.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(int id)
+        public JsonResult Delete(int id)
         {
             var categoryFromDb = _db.Categories.Find(id);
+            var status = true;
             if(categoryFromDb == null)
             {
-                return NotFound();
+                status = false;
             }
 
             _db.Categories.Remove(categoryFromDb);
             _db.SaveChanges();
 
-            return RedirectToAction("Index");
+            return Json( new { status = status});
         }
     }
 }

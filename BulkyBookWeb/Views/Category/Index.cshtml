@@ -38,10 +38,29 @@
                 <td>@item.DisplayOrder</td>
                 <td>
                     <a class="btn-primary btn-sm" asp-controller="Category" asp-action="Form" asp-route-Id="@item.Id"><i class="bi bi-pencil-square"></i> Edit</a>
-                    <a class="btn-danger btn-sm" asp-controller="Category" asp-action="Delete" asp-route-Id="@item.Id"><i class="bi bi-trash"></i> Delete</a>
+                    <a class="btn-danger btn-sm btn-delete" data-id="@item.Id"><i class="bi bi-trash"></i> Delete</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $(".btn-delete").on("click", function(){
+                var Id = $(this).data("id");
+                $.ajax({
+                    type: 'POST',
+                    url: 'Category/Delete/' + Id,
+                    success: function (response) {
+                        window.location.reload();
+                    },
+                    error: function (err) {
+                        console.log(err)
+                    }
+                })
+            });
+        });
+    </script>
+}
